@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{820CE272-EA96-43E1-A98A-F9CF1EE474EE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MouseNet.Forms</RootNamespace>
+    <AssemblyName>MouseNet.Forms</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\MouseNet.Forms.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Design.4.0.0.0\lib\System.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\ColorPicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ColorPicker.designer.cs">
+      <DependentUpon>ColorPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FontTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FontTextBox.designer.cs">
+      <DependentUpon>FontTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RadioButtonGroup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\RadioButtonGroup.designer.cs">
+      <DependentUpon>RadioButtonGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Separator.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Separator.designer.cs">
+      <DependentUpon>Separator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SizeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\SizeControl.designer.cs">
+      <DependentUpon>SizeControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\WrappingLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\ColorPicker.resx">
+      <DependentUpon>ColorPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FontTextBox.resx">
+      <DependentUpon>FontTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\RadioButtonGroup.resx">
+      <DependentUpon>RadioButtonGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Separator.resx">
+      <DependentUpon>Separator.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\SizeControl.resx">
+      <DependentUpon>SizeControl.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

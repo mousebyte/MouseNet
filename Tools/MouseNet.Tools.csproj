@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2260125F-0101-4AC1-A42C-503422F46304}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MouseNet.Tools</RootNamespace>
+    <AssemblyName>MouseNet.Tools</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\MouseNet.Tools.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ConditionalEventHandler.cs" />
+    <Compile Include="INamedObject.cs" />
+    <Compile Include="InvalidTypeParameterException.cs" />
+    <Compile Include="IO\FileLinkedList.cs" />
+    <Compile Include="IO\FileLinkedListBase.cs" />
+    <Compile Include="IO\IFileNode.cs" />
+    <Compile Include="IO\ISelfSerializable.cs" />
+    <Compile Include="IO\SerializableObject.cs" />
+    <Compile Include="NamedObject.cs" />
+    <Compile Include="NamedObjectList.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Timers\Alarm.cs" />
+    <Compile Include="Timers\AlarmSettings.cs" />
+    <Compile Include="Timers\Counter.cs" />
+    <Compile Include="Timers\CounterSettings.cs" />
+    <Compile Include="Timers\EventArgs.cs" />
+    <Compile Include="Timers\IAlarmSettings.cs" />
+    <Compile Include="Timers\ICounterInstance.cs" />
+    <Compile Include="Timers\ICounterSettings.cs" />
+    <Compile Include="Timers\ITimer.cs" />
+    <Compile Include="Timers\SynchronizedTimer.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
