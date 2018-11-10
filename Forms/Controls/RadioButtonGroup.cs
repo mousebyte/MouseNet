@@ -14,18 +14,18 @@ namespace MouseNet.Forms.Controls
     /// <inheritdoc />
     /// <summary>
     ///     Represents a group of <see cref="T:System.Windows.Forms.RadioButton" />
-    ///     objects and provides
-    ///     methods to arrange and access them.
+    ///     objects and provides methods to arrange and access them.
     /// </summary>
     /// <seealso cref="T:System.Windows.Forms.UserControl" />
     [Designer(typeof(RadioButtonGroupDesigner))]
     public partial class RadioButtonGroup : UserControl
     {
-        private readonly List<RadioButton> _buttons;
+        private int _bottomMost = 10;
         private RadioButtonLayout _buttonLayout;
         private Padding _buttonMargin;
-        private int _checkedItemIndex;
+        private int _checkedItemIndex = -1;
         private RadioButtonCollection _items;
+        private int _rightMost = 10;
 
         /// <inheritdoc />
         /// <summary>
@@ -35,13 +35,11 @@ namespace MouseNet.Forms.Controls
         public RadioButtonGroup()
             {
             InitializeComponent();
-            _buttons = new List<RadioButton>();
             ButtonLayout = RadioButtonLayout.Vertical;
             ButtonMargin = Padding;
             PaddingChanged +=
                 (sender,
                  args) => ArrangeButtons();
-            Items.ObjectAdded += Add;
             }
 
         /// <summary>
@@ -73,6 +71,13 @@ namespace MouseNet.Forms.Controls
             }
         }
 
+        private IEnumerable<RadioButton> Buttons {
+            get {
+                foreach (var item in Items)
+                    yield return Find(item);
+            }
+        }
+
         /// <summary>
         ///     Gets or sets the layout of the buttons.
         /// </summary>
@@ -96,8 +101,10 @@ namespace MouseNet.Forms.Controls
         public int CheckedItemIndex {
             get => _checkedItemIndex;
             set {
-                if (value < 0 || value >= _buttons.Count) return;
-                _buttons[value].Checked = true;
+                if (value < 0 || value >= Items.Count) return;
+                if (_checkedItemIndex > -1)
+                    this[_checkedItemIndex] = false;
+                this[value] = true;
             }
         }
 
@@ -112,81 +119,81 @@ namespace MouseNet.Forms.Controls
         [Browsable(false)]
         public bool this
             [int index] {
-            get => _buttons[index].Checked;
+            get =>
+                index >= 0
+             && index < Items.Count
+             && At(index).Checked;
             set {
-                if (index < _buttons.Count && index >= 0)
-                    _buttons[index].Checked = value;
+                if (index >= Items.Count || index < 0) return;
+                At(index).Checked = value;
+                if (value && _checkedItemIndex >= 0)
+                    At(_checkedItemIndex).Checked = false;
             }
         }
 
-        /// <exclude />
-        /// Internal remove method.
-        private void RemoveAt
+        private RadioButton At
             (int index)
             {
-            Controls.Remove(_buttons[index]);
-            _buttons.RemoveAt(index);
-            _items.RemoveAt(index);
-            ArrangeButtons();
+            return Buttons.ElementAt(index);
             }
 
-        /// <exclude />
-        /// Internal factory method.
+        private RadioButton Find
+            (object item)
+            {
+            return Controls[ButtonName(item)] as RadioButton;
+            }
+
+        private static string ButtonName
+            (object item)
+            {
+            var str = ((string) item).Replace(' ', '_');
+            if (!str.StartsWith("_"))
+                str = '_' + str;
+            return str;
+            }
+
         private RadioButton MakeButton
-            (object value)
+            (string name)
             {
             var button = new RadioButton
                 {
-                Text = value.ToString(),
+                Text = name,
+                Name = ButtonName(name),
                 Margin = ButtonMargin,
                 Anchor = AnchorStyles.Left | AnchorStyles.Top,
                 AutoSize = true
                 };
-            if (_buttons.Count == 0) button.Checked = true;
+            if (Items.Count == 0) button.Checked = true;
             button.CheckedChanged += OnCheckedItemChanged;
             return button;
             }
 
         /// <exclude />
-        /// Internal add method.
+        /// Internal factory method.
         private void Add
-            (object item)
+            (object value)
             {
-            var button = MakeButton(item);
-            Controls.Add(button);
-            _buttons.Add(button);
+            Controls.Add(MakeButton(value.ToString()));
             ArrangeButtons();
             }
 
-        /// <exclude />
-        /// Internal set method.
-        private void SetItem
-            (int index,
-             object value)
+        private void AddRange
+            (IEnumerable<object> values)
             {
-            _buttons[index].Text = value.ToString();
-            _items[index] = value.ToString();
+            foreach (var value in values)
+                Controls.Add(MakeButton(value.ToString()));
+            ArrangeButtons();
             }
 
         /// <exclude />
         /// Internal clear method.
         private void Clear()
             {
-            foreach (var button in _buttons) Controls.Remove(button);
-            _buttons.Clear();
-            _items.Clear();
-            }
-
-        /// <exclude />
-        /// Internal insert method.
-        private void Insert
-            (int index,
-             object item)
-            {
-            var button = MakeButton(item);
-            _buttons.Insert(index, button);
-            Controls.Add(button);
-            ArrangeButtons();
+            foreach (var button in Buttons)
+                {
+                Controls.Remove(button);
+                button.Dispose();
+                }
             }
 
         /// <summary>
@@ -202,7 +209,7 @@ namespace MouseNet.Forms.Controls
             {
             if (!(sender is RadioButton btn)) return;
             if (!btn.Checked) return;
-            _checkedItemIndex = _buttons.IndexOf(btn);
+            _checkedItemIndex = Items.IndexOf(btn.Text);
             CheckedItemChanged?.Invoke(sender, args);
             }
 
@@ -221,19 +228,25 @@ namespace MouseNet.Forms.Controls
             base.SetBoundsCore(x, y, width, height, specified);
             }
 
-        private int _rightMost = 10;
-        private int _bottomMost = 10;
+        /// <inheritdoc />
+        protected override void OnHandleCreated
+            (EventArgs e)
+            {
+            base.OnHandleCreated(e);
+            if (!Buttons.Any())
+                AddRange(Items.GetValues());
+            }
 
         /// <exclude />
         /// Arranges the buttons and resizes the control.
         private void ArrangeButtons()
             {
-            if (!_buttons.Any()) return;
+            if (!Buttons.Any()) return;
             var loc = new Point(Padding.Left, Padding.Top);
 
             if (ButtonLayout == RadioButtonLayout.Horizontal)
                 {
-                foreach (var radioButton in _buttons)
+                foreach (var radioButton in Buttons)
                     {
                     radioButton.Location = loc;
                     loc = new Point(
@@ -244,7 +257,7 @@ namespace MouseNet.Forms.Controls
                 } else
                 {
                 _rightMost = 0;
-                foreach (var radioButton in _buttons)
+                foreach (var radioButton in Buttons)
                     {
                     radioButton.Location = loc;
                     loc = new Point(loc.X,
@@ -255,7 +268,7 @@ namespace MouseNet.Forms.Controls
                     }
                 }
 
-            _bottomMost = _buttons[_buttons.Count - 1].Bottom;
+            _bottomMost = Buttons.Last().Bottom;
             SetBoundsCore(Left,
                           Top,
                           _rightMost + Padding.Right,
@@ -280,7 +293,7 @@ namespace MouseNet.Forms.Controls
                     if (base.SnapLines != null)
                         result.AddRange(
                             base.SnapLines.Cast<SnapLine>());
-                    foreach (var button in _control._buttons)
+                    foreach (var button in _control.Buttons)
                         result.AddRange(GetSnapLines(button));
                     return result;
                 }
@@ -400,16 +413,8 @@ namespace MouseNet.Forms.Controls
             public bool IsFixedSize => false;
             /// <inheritdoc />
             public bool IsReadOnly => false;
-            /// <summary>
-            /// Occurs when an item is added.
-            /// </summary>
-            public event Action<object> ObjectAdded;
 
-            /// <summary>
-            /// Adds the specified item to the collection.
-            /// </summary>
-            /// <param name="item">The item to add.</param>
-            /// <returns>The item's index in the collection.</returns>
+            /// <inheritdoc />
             int IList.Add
                 (object item)
                 {
@@ -431,8 +436,8 @@ namespace MouseNet.Forms.Controls
             /// <inheritdoc />
             public void Clear()
                 {
+                _owner.Clear();
                 List.Clear();
-                if (_owner.IsHandleCreated) _owner.Clear();
                 }
 
             /// <inheritdoc />
@@ -442,11 +447,7 @@ namespace MouseNet.Forms.Controls
                 return IndexOf(value) != -1;
                 }
 
-            /// <summary>
-            ///     Copies the contents of the collection to the provided array.
-            /// </summary>
-            /// <param name="destination">The destination array.</param>
-            /// <param name="index">The starting index of the copy operation.</param>
+            /// <inheritdoc />
             void ICollection.CopyTo
                 (Array destination,
                  int index)
@@ -469,13 +470,7 @@ namespace MouseNet.Forms.Controls
                 return List.IndexOf(value);
                 }
 
-            /// <summary>
-            ///     Inserts an object at the specified index.
-            /// </summary>
-            /// <param name="index">The index.</param>
-            /// <param name="item">The item to add.</param>
-            /// <exception cref="System.ArgumentNullException"><paramref name="item" /> was null.</exception>
-            /// <exception cref="System.ArgumentOutOfRangeException"><paramref name="index" /> was out of range.</exception>
+            /// <inheritdoc />
             public void Insert
                 (int index,
                  object item)
@@ -486,8 +481,8 @@ namespace MouseNet.Forms.Controls
                     throw new ArgumentOutOfRangeException(
                         nameof(index));
                 List.Insert(index, item);
-                if (_owner.IsHandleCreated)
-                    _owner.Insert(index, item);
+                _owner.Add(item);
+                _owner.ArrangeButtons();
                 }
 
             /// <inheritdoc />
@@ -498,7 +493,10 @@ namespace MouseNet.Forms.Controls
                     throw new ArgumentOutOfRangeException(
                         nameof(index));
                 List.RemoveAt(index);
-                if (_owner.IsHandleCreated) _owner.RemoveAt(index);
+                var btn = _owner.At(index);
+                _owner.Controls.Remove(btn);
+                btn.Dispose();
+                _owner.ArrangeButtons();
                 }
 
             /// <inheritdoc />
@@ -528,8 +526,7 @@ namespace MouseNet.Forms.Controls
                 if (item == null)
                     throw new ArgumentNullException(nameof(item));
                 List.Add(item);
-                //if (_owner.IsHandleCreated)
-                SendObjectAdded(item);
+                _owner.Add(item);
                 return List.Count - 1;
                 }
 
@@ -543,7 +540,8 @@ namespace MouseNet.Forms.Controls
                 {
                 if (items == null)
                     throw new ArgumentNullException(nameof(items));
-                foreach (var item in items) AddInternal(item);
+                List.AddRange(items);
+                _owner.AddRange(items);
                 }
 
             /// <exclude />
@@ -558,8 +556,8 @@ namespace MouseNet.Forms.Controls
                 List[index] =
                     value
                  ?? throw new ArgumentNullException(nameof(value));
-                if (_owner.IsHandleCreated)
-                    _owner.SetItem(index, value);
+                _owner.At(index).Text = value.ToString();
+                _owner.ArrangeButtons();
                 }
 
             /// <summary>
@@ -576,13 +574,12 @@ namespace MouseNet.Forms.Controls
                 }
 
             /// <summary>
-            /// Invokes the OnObjectAdded event.
+            ///     Gets the values currently held within the list.
             /// </summary>
-            /// <param name="obj">The new object.</param>
-            protected virtual void SendObjectAdded
-                (object obj)
+            /// <returns></returns>
+            public IEnumerable<object> GetValues()
                 {
-                ObjectAdded?.Invoke(obj);
+                return List.ToArray();
                 }
         }
     }
