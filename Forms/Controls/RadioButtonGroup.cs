@@ -200,8 +200,9 @@ namespace MouseNet.Forms.Controls
             (object sender,
              EventArgs args)
             {
-            if (sender is RadioButton btn && !btn.Checked) return;
-            _checkedItemIndex = Items.IndexOf(sender);
+            if (!(sender is RadioButton btn)) return;
+            if (!btn.Checked) return;
+            _checkedItemIndex = _buttons.IndexOf(btn);
             CheckedItemChanged?.Invoke(sender, args);
             }
 
