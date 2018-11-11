@@ -35,8 +35,8 @@ namespace MouseNet.Forms.Controls
         public RadioButtonGroup()
             {
             InitializeComponent();
-            ButtonLayout = RadioButtonLayout.Vertical;
-            ButtonMargin = Padding;
+            _buttonLayout = RadioButtonLayout.Vertical;
+            _buttonMargin = Padding;
             PaddingChanged +=
                 (sender,
                  args) => ArrangeButtons();
