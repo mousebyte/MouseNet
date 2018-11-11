@@ -159,7 +159,7 @@ namespace MouseNet.Forms.Controls
                 {
                 Text = name,
                 Name = ButtonName(name),
-                Margin = ButtonMargin,
+                //Margin = ButtonMargin,
                 Anchor = AnchorStyles.Left | AnchorStyles.Top,
                 AutoSize = true
                 };
