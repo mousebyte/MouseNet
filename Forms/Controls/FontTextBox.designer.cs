@@ -40,10 +40,10 @@
             this._editFont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._editFont.AutoSize = true;
             this._editFont.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._editFont.Location = new System.Drawing.Point(170, 0);
+            this._editFont.Location = new System.Drawing.Point(194, 0);
             this._editFont.Margin = new System.Windows.Forms.Padding(0);
             this._editFont.Name = "_editFont";
-            this._editFont.Size = new System.Drawing.Size(30, 24);
+            this._editFont.Size = new System.Drawing.Size(6, 6);
             this._editFont.TabIndex = 0;
             this._toolTip.SetToolTip(this._editFont, "Edit Font");
             this._editFont.UseVisualStyleBackColor = true;
@@ -51,7 +51,8 @@
             // 
             // _text
             // 
-            this._text.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this._text.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this._text.Location = new System.Drawing.Point(0, 2);
             this._text.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);

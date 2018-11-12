@@ -103,8 +103,8 @@ namespace MouseNet.Forms.Controls
             set {
                 if (value < 0 || value >= Items.Count) return;
                 if (_checkedItemIndex > -1)
-                    this[_checkedItemIndex] = false;
-                this[value] = true;
+                    At(_checkedItemIndex).Checked = false;
+                At(value).Checked = true;
             }
         }
 
@@ -126,8 +126,8 @@ namespace MouseNet.Forms.Controls
             set {
                 if (index >= Items.Count || index < 0) return;
                 At(index).Checked = value;
-                if (value && _checkedItemIndex >= 0)
-                    At(_checkedItemIndex).Checked = false;
+                if (!value || _checkedItemIndex < 0) return;
+                At(_checkedItemIndex).Checked = false;
             }
         }
 
@@ -207,8 +207,7 @@ namespace MouseNet.Forms.Controls
             (object sender,
              EventArgs args)
             {
-            if (!(sender is RadioButton btn)) return;
-            if (!btn.Checked) return;
+            if (!(sender is RadioButton btn) || !btn.Checked) return;
             _checkedItemIndex = Items.IndexOf(btn.Text);
             CheckedItemChanged?.Invoke(sender, args);
             }
