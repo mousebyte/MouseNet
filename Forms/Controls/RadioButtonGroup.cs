@@ -131,41 +131,19 @@ namespace MouseNet.Forms.Controls
             }
         }
 
-        private RadioButton At
-            (int index)
+        /// <inheritdoc />
+        protected override void SetBoundsCore
+            (int x,
+             int y,
+             int width,
+             int height,
+             BoundsSpecified specified)
             {
-            return Buttons.ElementAt(index);
-            }
-
-        private RadioButton Find
-            (object item)
-            {
-            return Controls[ButtonName(item)] as RadioButton;
-            }
-
-        private static string ButtonName
-            (object item)
-            {
-            var str = ((string) item).Replace(' ', '_');
-            if (!str.StartsWith("_"))
-                str = '_' + str;
-            return str;
-            }
-
-        private RadioButton MakeButton
-            (string name)
-            {
-            var button = new RadioButton
-                {
-                Text = name,
-                Name = ButtonName(name),
-                //Margin = ButtonMargin,
-                Anchor = AnchorStyles.Left | AnchorStyles.Top,
-                AutoSize = true
-                };
-            if (Items.Count == 0) button.Checked = true;
-            button.CheckedChanged += OnCheckedItemChanged;
-            return button;
+            if (width < _rightMost + Padding.Right)
+                width = _rightMost + Padding.Right;
+            if (height < _bottomMost + Padding.Bottom)
+                height = _bottomMost + Padding.Bottom;
+            base.SetBoundsCore(x, y, width, height, specified);
             }
 
         /// <exclude />
@@ -183,57 +161,6 @@ namespace MouseNet.Forms.Controls
             foreach (var value in values)
                 Controls.Add(MakeButton(value.ToString()));
             ArrangeButtons();
-            }
-
-        /// <exclude />
-        /// Internal clear method.
-        private void Clear()
-            {
-            foreach (var button in Buttons)
-                {
-                Controls.Remove(button);
-                button.Dispose();
-                }
-            }
-
-        /// <summary>
-        ///     Occurs when the checked item changes.
-        /// </summary>
-        public event EventHandler CheckedItemChanged;
-
-        /// <exclude />
-        /// Internal event invoker.
-        private void OnCheckedItemChanged
-            (object sender,
-             EventArgs args)
-            {
-            if (!(sender is RadioButton btn) || !btn.Checked) return;
-            _checkedItemIndex = Items.IndexOf(btn.Text);
-            CheckedItemChanged?.Invoke(sender, args);
-            }
-
-        /// <inheritdoc />
-        protected override void SetBoundsCore
-            (int x,
-             int y,
-             int width,
-             int height,
-             BoundsSpecified specified)
-            {
-            if (width < _rightMost + Padding.Right)
-                width = _rightMost + Padding.Right;
-            if (height < _bottomMost + Padding.Bottom)
-                height = _bottomMost + Padding.Bottom;
-            base.SetBoundsCore(x, y, width, height, specified);
-            }
-
-        /// <inheritdoc />
-        protected override void OnHandleCreated
-            (EventArgs e)
-            {
-            base.OnHandleCreated(e);
-            if (!Buttons.Any())
-                AddRange(Items.GetValues());
             }
 
         /// <exclude />
@@ -275,108 +202,81 @@ namespace MouseNet.Forms.Controls
                           BoundsSpecified.Size);
             }
 
-        /// <inheritdoc />
-        /// <summary>
-        ///     Provides snaplines for the Windows Forms Designer.
-        /// </summary>
-        /// <seealso cref="T:System.Windows.Forms.Design.ControlDesigner" />
-        private class RadioButtonGroupDesigner : ControlDesigner
-        {
-            private RadioButtonGroup _control;
+        private RadioButton At
+            (int index)
+            {
+            return Buttons.ElementAt(index);
+            }
 
-            public override IList SnapLines {
-                get {
-                    var result = new List<SnapLine>();
-                    _control = Control as RadioButtonGroup;
-                    if (_control == null) return result;
-                    if (base.SnapLines != null)
-                        result.AddRange(
-                            base.SnapLines.Cast<SnapLine>());
-                    foreach (var button in _control.Buttons)
-                        result.AddRange(GetSnapLines(button));
-                    return result;
+        private static string ButtonName
+            (object item)
+            {
+            var str = ((string) item).Replace(' ', '_');
+            if (!str.StartsWith("_"))
+                str = '_' + str;
+            return str;
+            }
+
+        /// <exclude />
+        /// Internal clear method.
+        private void Clear()
+            {
+            foreach (var button in Buttons)
+                {
+                Controls.Remove(button);
+                button.Dispose();
                 }
             }
 
-            private static SnapLine AddOffset
-                (SnapLine line,
-                 int i)
-                {
-                return new SnapLine(line.SnapLineType,
-                                    line.Offset + i,
-                                    line.Priority);
-                }
+        private RadioButton Find
+            (object item)
+            {
+            return Controls[ButtonName(item)] as RadioButton;
+            }
 
-            private IEnumerable<SnapLine> GetSnapLines
-                (Control control)
+        private RadioButton MakeButton
+            (string name)
+            {
+            var button = new RadioButton
                 {
-                var result = new List<SnapLine>();
-                var designer =
-                    TypeDescriptor.CreateDesigner(
-                        control,
-                        typeof(IDesigner));
-                designer.Initialize(control);
-                if (!(designer is ControlDesigner controlDesigner)
-                 || controlDesigner.SnapLines == null)
-                    return result;
-                var lines = controlDesigner
-                           .SnapLines.Cast<SnapLine>()
-                           .ToList();
-                //always add right snap lines
-                result.AddRange(
-                    lines.Where(l => l.SnapLineType
-                                  == SnapLineType.Right)
-                         .Select(r => AddOffset(r, control.Left)));
-                switch (_control.ButtonLayout)
-                    {
-                    case RadioButtonLayout.Vertical:
-                        //add baselines, bottoms, and a single left
-                        result.AddRange(
-                            lines
-                               .Where(
-                                    l => l.SnapLineType
-                                      == SnapLineType.Baseline
-                                      || l.SnapLineType
-                                      == SnapLineType.Bottom)
-                               .Select(
-                                    b => AddOffset(b, control.Top)));
-                        result.Add(
-                            AddOffset(
-                                lines.First(
-                                    l => l.SnapLineType
-                                      == SnapLineType.Left),
-                                control.Left));
-                        break;
-                    case RadioButtonLayout.Horizontal:
-                        //add lefts and a single bottom and baseline
-                        result.AddRange(
-                            lines.Where(l => l.SnapLineType
-                                          == SnapLineType.Left)
-                                 .Select(
-                                      r => AddOffset(
-                                          r,
-                                          control.Left)));
-                        result.Add(
-                            AddOffset(
-                                lines.First(
-                                    l => l.SnapLineType
-                                      == SnapLineType.Bottom),
-                                control.Top));
-                        result.Add(
-                            AddOffset(
-                                lines.First(
-                                    l => l.SnapLineType
-                                      == SnapLineType.Baseline),
-                                control.Top));
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                    }
+                Text = name,
+                Name = ButtonName(name),
+                //Margin = ButtonMargin,
+                Anchor = AnchorStyles.Left | AnchorStyles.Top,
+                AutoSize = true
+                };
+            if (Items.Count == 0) button.Checked = true;
+            button.CheckedChanged += InvokeCheckedItemChanged;
+            return button;
+            }
 
-                designer.Dispose();
-                return result;
-                }
-        }
+        /// <inheritdoc />
+        protected override void OnHandleCreated
+            (EventArgs e)
+            {
+            base.OnHandleCreated(e);
+            if (Items.Count == 0)
+                Items.Add("radioButton1");
+            if (!Buttons.Any())
+                AddRange(Items.GetValues());
+            CheckedItemIndex = 0;
+            }
+
+        /// <exclude />
+        /// Internal event invoker.
+        private void InvokeCheckedItemChanged
+            (object sender,
+             EventArgs args)
+            {
+            if (!(sender is RadioButton btn) || !btn.Checked) return;
+            _checkedItemIndex = Items.IndexOf(btn.Text);
+            CheckedItemChanged?.Invoke(sender, args);
+            }
+
+        /// <summary>
+        ///     Occurs when the checked item changes.
+        /// </summary>
+        public event EventHandler CheckedItemChanged;
 
         /// <inheritdoc />
         /// <summary>
@@ -402,6 +302,82 @@ namespace MouseNet.Forms.Controls
 
             private ArrayList List =>
                 _list ?? (_list = new ArrayList());
+
+            /// <summary>
+            ///     Adds the specified item to the collection.
+            /// </summary>
+            /// <param name="item">The item to add.</param>
+            /// <returns>The item's index in the collection.</returns>
+            public int Add
+                (object item)
+                {
+                return AddInternal(item);
+                }
+
+            /// <summary>
+            ///     Adds the specified range of items to the collection.
+            /// </summary>
+            /// <param name="items">The items to add.</param>
+            /// <exception cref="System.ArgumentNullException"><c>items</c> was null.</exception>
+            public void AddRange
+                (object[] items)
+                {
+                if (items == null)
+                    throw new ArgumentNullException(nameof(items));
+                List.AddRange(items);
+                _owner.AddRange(items);
+                }
+
+            /// <summary>
+            ///     Copies the contents of the collection to the provided array starting at the
+            ///     specified index.
+            /// </summary>
+            /// <param name="destination">The destination array.</param>
+            /// <param name="arrayIndex">The starting index of the copy operation.</param>
+            public void CopyTo
+                (object[] destination,
+                 int arrayIndex)
+                {
+                List.CopyTo(destination, arrayIndex);
+                }
+
+            /// <summary>
+            ///     Gets the values currently held within the list.
+            /// </summary>
+            /// <returns></returns>
+            public IEnumerable<object> GetValues()
+                {
+                return List.ToArray();
+                }
+
+            /// <exclude />
+            /// Internal add method.
+            private int AddInternal
+                (object item)
+                {
+                if (item == null)
+                    throw new ArgumentNullException(nameof(item));
+                List.Add(item);
+                _owner.Add(item);
+                return List.Count - 1;
+                }
+
+            /// <exclude />
+            /// Internal set method.
+            private void SetItemInternal
+                (int index,
+                 object value)
+                {
+                if (index < 0 || index >= List.Count)
+                    throw new ArgumentOutOfRangeException(
+                        nameof(index));
+                List[index] =
+                    value
+                 ?? throw new ArgumentNullException(nameof(value));
+                _owner.At(index).Text = value.ToString();
+                _owner.ArrangeButtons();
+                }
+
             /// <inheritdoc />
             public int Count => List.Count;
             /// <inheritdoc />
@@ -505,80 +481,108 @@ namespace MouseNet.Forms.Controls
                 var index = List.IndexOf(value);
                 if (index != -1) RemoveAt(index);
                 }
+        }
 
-            /// <summary>
-            ///     Adds the specified item to the collection.
-            /// </summary>
-            /// <param name="item">The item to add.</param>
-            /// <returns>The item's index in the collection.</returns>
-            public int Add
-                (object item)
+        /// <inheritdoc />
+        /// <summary>
+        ///     Provides snaplines for the Windows Forms Designer.
+        /// </summary>
+        /// <seealso cref="T:System.Windows.Forms.Design.ControlDesigner" />
+        private class RadioButtonGroupDesigner : ControlDesigner
+        {
+            private RadioButtonGroup _control;
+
+            public override IList SnapLines {
+                get {
+                    var result = new List<SnapLine>();
+                    _control = Control as RadioButtonGroup;
+                    if (_control == null) return result;
+                    if (base.SnapLines != null)
+                        result.AddRange(
+                            base.SnapLines.Cast<SnapLine>());
+                    foreach (var button in _control.Buttons)
+                        result.AddRange(GetSnapLines(button));
+                    return result;
+                }
+            }
+
+            private IEnumerable<SnapLine> GetSnapLines
+                (Control control)
                 {
-                return AddInternal(item);
+                var result = new List<SnapLine>();
+                var designer =
+                    TypeDescriptor.CreateDesigner(
+                        control,
+                        typeof(IDesigner));
+                designer.Initialize(control);
+                if (!(designer is ControlDesigner controlDesigner)
+                 || controlDesigner.SnapLines == null)
+                    return result;
+                var lines = controlDesigner
+                           .SnapLines.Cast<SnapLine>()
+                           .ToList();
+                //always add right snap lines
+                result.AddRange(
+                    lines.Where(l => l.SnapLineType
+                                  == SnapLineType.Right)
+                         .Select(r => AddOffset(r, control.Left)));
+                switch (_control.ButtonLayout)
+                    {
+                    case RadioButtonLayout.Vertical:
+                        //add baselines, bottoms, and a single left
+                        result.AddRange(
+                            lines
+                               .Where(
+                                    l => l.SnapLineType
+                                      == SnapLineType.Baseline
+                                      || l.SnapLineType
+                                      == SnapLineType.Bottom)
+                               .Select(
+                                    b => AddOffset(b, control.Top)));
+                        result.Add(
+                            AddOffset(
+                                lines.First(
+                                    l => l.SnapLineType
+                                      == SnapLineType.Left),
+                                control.Left));
+                        break;
+                    case RadioButtonLayout.Horizontal:
+                        //add lefts and a single bottom and baseline
+                        result.AddRange(
+                            lines.Where(l => l.SnapLineType
+                                          == SnapLineType.Left)
+                                 .Select(
+                                      r => AddOffset(
+                                          r,
+                                          control.Left)));
+                        result.Add(
+                            AddOffset(
+                                lines.First(
+                                    l => l.SnapLineType
+                                      == SnapLineType.Bottom),
+                                control.Top));
+                        result.Add(
+                            AddOffset(
+                                lines.First(
+                                    l => l.SnapLineType
+                                      == SnapLineType.Baseline),
+                                control.Top));
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                    }
+
+                designer.Dispose();
+                return result;
                 }
 
-            /// <exclude />
-            /// Internal add method.
-            private int AddInternal
-                (object item)
+            private static SnapLine AddOffset
+                (SnapLine line,
+                 int i)
                 {
-                if (item == null)
-                    throw new ArgumentNullException(nameof(item));
-                List.Add(item);
-                _owner.Add(item);
-                return List.Count - 1;
-                }
-
-            /// <summary>
-            ///     Adds the specified range of items to the collection.
-            /// </summary>
-            /// <param name="items">The items to add.</param>
-            /// <exception cref="System.ArgumentNullException"><c>items</c> was null.</exception>
-            public void AddRange
-                (object[] items)
-                {
-                if (items == null)
-                    throw new ArgumentNullException(nameof(items));
-                List.AddRange(items);
-                _owner.AddRange(items);
-                }
-
-            /// <exclude />
-            /// Internal set method.
-            private void SetItemInternal
-                (int index,
-                 object value)
-                {
-                if (index < 0 || index >= List.Count)
-                    throw new ArgumentOutOfRangeException(
-                        nameof(index));
-                List[index] =
-                    value
-                 ?? throw new ArgumentNullException(nameof(value));
-                _owner.At(index).Text = value.ToString();
-                _owner.ArrangeButtons();
-                }
-
-            /// <summary>
-            ///     Copies the contents of the collection to the provided array starting at the
-            ///     specified index.
-            /// </summary>
-            /// <param name="destination">The destination array.</param>
-            /// <param name="arrayIndex">The starting index of the copy operation.</param>
-            public void CopyTo
-                (object[] destination,
-                 int arrayIndex)
-                {
-                List.CopyTo(destination, arrayIndex);
-                }
-
-            /// <summary>
-            ///     Gets the values currently held within the list.
-            /// </summary>
-            /// <returns></returns>
-            public IEnumerable<object> GetValues()
-                {
-                return List.ToArray();
+                return new SnapLine(line.SnapLineType,
+                                    line.Offset + i,
+                                    line.Priority);
                 }
         }
     }

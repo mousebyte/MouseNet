@@ -43,18 +43,7 @@ namespace MouseNet.Forms.Controls
 
         /// <inheritdoc />
         /// <remarks>
-        /// This override calls <c>WrapText</c> after the base method.
-        /// </remarks>
-        protected override void OnTextChanged
-            (EventArgs e)
-            {
-            base.OnTextChanged(e);
-            WrapText();
-            }
-
-        /// <inheritdoc />
-        /// <remarks>
-        /// This override calls <c>WrapText</c> after the base method.
+        ///     This override calls <c>WrapText</c> after the base method.
         /// </remarks>
         protected override void OnFontChanged
             (EventArgs e)
@@ -65,12 +54,23 @@ namespace MouseNet.Forms.Controls
 
         /// <inheritdoc />
         /// <remarks>
-        /// This override calls <c>WrapText</c> after the base method.
+        ///     This override calls <c>WrapText</c> after the base method.
         /// </remarks>
         protected override void OnSizeChanged
             (EventArgs e)
             {
             base.OnSizeChanged(e);
+            WrapText();
+            }
+
+        /// <inheritdoc />
+        /// <remarks>
+        ///     This override calls <c>WrapText</c> after the base method.
+        /// </remarks>
+        protected override void OnTextChanged
+            (EventArgs e)
+            {
+            base.OnTextChanged(e);
             WrapText();
             }
     }

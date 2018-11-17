@@ -95,22 +95,6 @@ namespace MouseNet.Forms.Controls
             set => _editFont.Image = value;
         }
 
-        /// <summary>
-        ///     Called when the font configuration button is clicked.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="args">
-        ///     The <see cref="EventArgs" /> instance containing the event
-        ///     data.
-        /// </param>
-        private void OnFontClicked
-            (object sender,
-             EventArgs args)
-            {
-            if (_dialog.ShowDialog(ParentForm) == DialogResult.OK)
-                SetTextFont(_dialog.Font);
-            }
-
         /// <inheritdoc />
         protected override void SetBoundsCore
             (int x,
@@ -145,6 +129,22 @@ namespace MouseNet.Forms.Controls
                                   _text.Font.Size,
                                   font.Style,
                                   font.Unit);
+            }
+
+        /// <summary>
+        ///     Called when the font configuration button is clicked.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">
+        ///     The <see cref="EventArgs" /> instance containing the event
+        ///     data.
+        /// </param>
+        private void OnFontClicked
+            (object sender,
+             EventArgs args)
+            {
+            if (_dialog.ShowDialog(ParentForm) == DialogResult.OK)
+                SetTextFont(_dialog.Font);
             }
     }
 }

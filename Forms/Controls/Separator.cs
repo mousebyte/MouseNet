@@ -77,16 +77,6 @@ namespace MouseNet.Forms.Controls
             }
         }
 
-        /// <summary>
-        ///     Updates the size depending on whether the separator is vertical or
-        ///     horizontal.
-        /// </summary>
-        private void UpdateSize()
-            {
-            if (_vertical) Width = _lineWidth + Padding.Horizontal;
-            else Height = _lineWidth + Padding.Vertical;
-            }
-
         /// <inheritdoc />
         protected override void SetBoundsCore
             (int x,
@@ -99,6 +89,16 @@ namespace MouseNet.Forms.Controls
             else height = _lineWidth + Padding.Vertical;
 
             base.SetBoundsCore(x, y, width, height, specified);
+            }
+
+        /// <summary>
+        ///     Updates the size depending on whether the separator is vertical or
+        ///     horizontal.
+        /// </summary>
+        private void UpdateSize()
+            {
+            if (_vertical) Width = _lineWidth + Padding.Horizontal;
+            else Height = _lineWidth + Padding.Vertical;
             }
 
         /// <inheritdoc />
