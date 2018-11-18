@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -12,10 +13,13 @@ namespace MouseNet.Forms.Controls
     /// <seealso cref="T:System.Windows.Forms.UserControl" />
     public partial class FontTextBox : UserControl
     {
+        private readonly int _btnAreaWidth;
+        private readonly Font _defaultFont;
         private readonly FontDialog _fontDialog = new FontDialog();
         private readonly int _minHeight;
         private readonly int _padding;
         private int _multiLineHeight;
+        private bool _showFontSelect;
 
         /// <inheritdoc />
         /// <summary>
@@ -26,10 +30,35 @@ namespace MouseNet.Forms.Controls
             {
             InitializeComponent();
             PreviewFont = true;
+            _showFontSelect = true;
+            _btnAreaWidth = Width - _cText.Width;
+            _defaultFont = _cText.Font;
             _padding = _cText.Margin.Top + _cText.Margin.Bottom;
             _minHeight = _cText.Height + _padding;
             _multiLineHeight = _minHeight;
             }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether or not the font
+        ///     selection button is visible.
+        /// </summary>
+        [EditorBrowsable]
+        public bool ShowFontSelect {
+            get => _showFontSelect;
+            set {
+                _showFontSelect = value;
+                _cEditFont.Enabled = value;
+                _cEditFont.Visible = value;
+                if (value)
+                    {
+                    _cText.Width = Width - _btnAreaWidth;
+                    _cText.Font = _defaultFont;
+                    } else
+                    {
+                    _cText.Width = Width;
+                    }
+            }
+        }
 
         /// <inheritdoc />
         /// <summary>
@@ -110,7 +139,10 @@ namespace MouseNet.Forms.Controls
                     {
                     _multiLineHeight = height;
                     _cText.Height = _multiLineHeight - _padding;
-                    } else height = _minHeight;
+                    } else
+                    {
+                    height = _minHeight;
+                    }
                 }
 
             base.SetBoundsCore(x, y, width, height, specified);
