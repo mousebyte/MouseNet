@@ -12,6 +12,7 @@ namespace MouseNet.Forms.Controls
     /// <seealso cref="T:System.Windows.Forms.UserControl" />
     public partial class SizeControl : UserControl
     {
+        private const int CenterWidth = 15;
         private Size _maximumValue;
         private Size _minimumValue;
 
@@ -27,6 +28,8 @@ namespace MouseNet.Forms.Controls
             MaximumValue =
                 new Size(screenArea.Width, screenArea.Height);
             }
+
+        private int WidthLeft => Padding.Left + lblSize.Width;
 
         /// <summary>
         ///     Gets or sets the value of the control.
@@ -119,5 +122,29 @@ namespace MouseNet.Forms.Controls
                 cHeight.Maximum = value.Height;
             }
         }
+
+        /// <inheritdoc />
+        protected override void SetBoundsCore
+            (int x,
+             int y,
+             int width,
+             int height,
+             BoundsSpecified specified)
+            {
+            var setWidth = (specified & BoundsSpecified.Width)
+                        == BoundsSpecified.Width;
+            if (setWidth && width < 135) width = 135;
+            base.SetBoundsCore(x, y, width, height, specified);
+            if (!setWidth) return;
+            var combindedWidth =
+                Width - WidthLeft - CenterWidth - Padding.Right;
+            var nudWidth = combindedWidth / 2;
+            cWidth.Width = combindedWidth % 2 > 0
+                               ? nudWidth + 1
+                               : nudWidth;
+            cHeight.Width = nudWidth;
+            lblX.Left = cWidth.Right + 2;
+            cHeight.Left = lblX.Right + 1;
+            }
     }
 }

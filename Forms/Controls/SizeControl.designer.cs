@@ -38,7 +38,7 @@
             // 
             // cHeight
             // 
-            this.cHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cHeight.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.cHeight.Location = new System.Drawing.Point(90, 3);
             this.cHeight.Name = "cHeight";
             this.cHeight.Size = new System.Drawing.Size(42, 20);
@@ -46,7 +46,7 @@
             // 
             // lblX
             // 
-            this.lblX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblX.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.lblX.AutoSize = true;
             this.lblX.Location = new System.Drawing.Point(77, 5);
             this.lblX.Margin = new System.Windows.Forms.Padding(0);
@@ -57,7 +57,7 @@
             // 
             // cWidth
             // 
-            this.cWidth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cWidth.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cWidth.Location = new System.Drawing.Point(33, 3);
             this.cWidth.Name = "cWidth";
             this.cWidth.Size = new System.Drawing.Size(42, 20);
