@@ -12,6 +12,7 @@ namespace MouseNet.Forms.Controls
     /// <seealso cref="T:System.Windows.Forms.UserControl" />
     public partial class FontTextBox : UserControl
     {
+        private readonly FontDialog _fontDialog = new FontDialog();
         private readonly int _minHeight;
         private readonly int _padding;
         private int _multiLineHeight;
@@ -25,8 +26,8 @@ namespace MouseNet.Forms.Controls
             {
             InitializeComponent();
             PreviewFont = true;
-            _padding = _text.Margin.Top + _text.Margin.Bottom;
-            _minHeight = _text.Height + _padding;
+            _padding = _cText.Margin.Top + _cText.Margin.Bottom;
+            _minHeight = _cText.Height + _padding;
             _multiLineHeight = _minHeight;
             }
 
@@ -35,9 +36,9 @@ namespace MouseNet.Forms.Controls
         ///     Gets or sets the font associated with the <see cref="FontTextBox" />.
         /// </summary>
         public override Font Font {
-            get => _dialog.Font;
+            get => _fontDialog.Font;
             set {
-                _dialog.Font = value;
+                _fontDialog.Font = value;
                 if (PreviewFont) SetTextFont(value);
             }
         }
@@ -47,8 +48,8 @@ namespace MouseNet.Forms.Controls
         ///     Gets or sets the contents of the text box.
         /// </summary>
         public override string Text {
-            get => _text.Text;
-            set => _text.Text = value;
+            get => _cText.Text;
+            set => _cText.Text = value;
         }
 
         /// <summary>
@@ -59,9 +60,9 @@ namespace MouseNet.Forms.Controls
         ///     <c>true</c> if multiline; otherwise, <c>false</c>.
         /// </value>
         public bool Multiline {
-            get => _text.Multiline;
+            get => _cText.Multiline;
             set {
-                _text.Multiline = value;
+                _cText.Multiline = value;
                 SetBoundsCore(Left,
                               Top,
                               Width,
@@ -91,8 +92,8 @@ namespace MouseNet.Forms.Controls
         ///     The font button image.
         /// </value>
         public Image FontButtonImage {
-            get => _editFont.Image;
-            set => _editFont.Image = value;
+            get => _cEditFont.Image;
+            set => _cEditFont.Image = value;
         }
 
         /// <inheritdoc />
@@ -108,11 +109,8 @@ namespace MouseNet.Forms.Controls
                 if (Multiline && height >= _minHeight)
                     {
                     _multiLineHeight = height;
-                    _text.Height = _multiLineHeight - _padding;
-                    } else
-                    {
-                    height = _minHeight;
-                    }
+                    _cText.Height = _multiLineHeight - _padding;
+                    } else height = _minHeight;
                 }
 
             base.SetBoundsCore(x, y, width, height, specified);
@@ -125,10 +123,10 @@ namespace MouseNet.Forms.Controls
         private void SetTextFont
             (Font font)
             {
-            _text.Font = new Font(font.Name,
-                                  _text.Font.Size,
-                                  font.Style,
-                                  font.Unit);
+            _cText.Font = new Font(font.Name,
+                                   _cText.Font.Size,
+                                   font.Style,
+                                   font.Unit);
             }
 
         /// <summary>
@@ -139,12 +137,12 @@ namespace MouseNet.Forms.Controls
         ///     The <see cref="EventArgs" /> instance containing the event
         ///     data.
         /// </param>
-        private void OnFontClicked
+        private void OnEditFontClicked
             (object sender,
              EventArgs args)
             {
-            if (_dialog.ShowDialog(ParentForm) == DialogResult.OK)
-                SetTextFont(_dialog.Font);
+            if (_fontDialog.ShowDialog(ParentForm) == DialogResult.OK)
+                SetTextFont(_fontDialog.Font);
             }
     }
 }

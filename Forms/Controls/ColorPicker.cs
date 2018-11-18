@@ -12,7 +12,7 @@ namespace MouseNet.Forms.Controls
     /// <seealso cref="T:System.Windows.Forms.UserControl" />
     public partial class ColorPicker : UserControl
     {
-        private readonly ColorDialog _dialog;
+        private readonly ColorDialog _colorDialog;
 
         /// <inheritdoc />
         /// <summary>
@@ -21,7 +21,7 @@ namespace MouseNet.Forms.Controls
         public ColorPicker()
             {
             InitializeComponent();
-            _dialog = new ColorDialog();
+            _colorDialog = new ColorDialog();
             }
 
         /// <summary>
@@ -31,10 +31,10 @@ namespace MouseNet.Forms.Controls
         ///     The color.
         /// </value>
         public Color Color {
-            get => _dialog.Color;
+            get => _colorDialog.Color;
             set {
-                _dialog.Color = value;
-                cDisplayBox.BackColor = value;
+                _colorDialog.Color = value;
+                _cDisplayBox.BackColor = value;
             }
         }
 
@@ -48,8 +48,8 @@ namespace MouseNet.Forms.Controls
             (EventArgs e)
             {
             base.OnClick(e);
-            if (_dialog.ShowDialog(ParentForm) == DialogResult.OK)
-                cDisplayBox.BackColor = _dialog.Color;
+            if (_colorDialog.ShowDialog(ParentForm) == DialogResult.OK)
+                _cDisplayBox.BackColor = _colorDialog.Color;
             }
     }
 }

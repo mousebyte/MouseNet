@@ -29,47 +29,42 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this._editFont = new System.Windows.Forms.Button();
-            this._text = new System.Windows.Forms.TextBox();
-            this._dialog = new System.Windows.Forms.FontDialog();
-            this._toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this._cEditFont = new System.Windows.Forms.Button();
+            this._cText = new System.Windows.Forms.TextBox();
+            this._cToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
-            // _editFont
+            // _cEditFont
             // 
-            this._editFont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._editFont.AutoSize = true;
-            this._editFont.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this._editFont.Location = new System.Drawing.Point(194, 0);
-            this._editFont.Margin = new System.Windows.Forms.Padding(0);
-            this._editFont.Name = "_editFont";
-            this._editFont.Size = new System.Drawing.Size(6, 6);
-            this._editFont.TabIndex = 0;
-            this._toolTip.SetToolTip(this._editFont, "Edit Font");
-            this._editFont.UseVisualStyleBackColor = true;
-            this._editFont.Click += new System.EventHandler(this.OnFontClicked);
+            this._cEditFont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._cEditFont.AutoSize = true;
+            this._cEditFont.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._cEditFont.Location = new System.Drawing.Point(194, 0);
+            this._cEditFont.Margin = new System.Windows.Forms.Padding(0);
+            this._cEditFont.Name = "_cEditFont";
+            this._cEditFont.Size = new System.Drawing.Size(6, 6);
+            this._cEditFont.TabIndex = 0;
+            this._cToolTip.SetToolTip(this._cEditFont, "Edit Font");
+            this._cEditFont.UseVisualStyleBackColor = true;
+            this._cEditFont.Click += new System.EventHandler(this.OnEditFontClicked);
             // 
-            // _text
+            // _cText
             // 
-            this._text.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this._cText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this._text.Location = new System.Drawing.Point(0, 2);
-            this._text.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
-            this._text.Name = "_text";
-            this._text.Size = new System.Drawing.Size(160, 20);
-            this._text.TabIndex = 1;
-            // 
-            // _dialog
-            // 
-            this._dialog.ShowColor = true;
+            this._cText.Location = new System.Drawing.Point(0, 2);
+            this._cText.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
+            this._cText.Name = "_cText";
+            this._cText.Size = new System.Drawing.Size(160, 20);
+            this._cText.TabIndex = 1;
             // 
             // FontTextBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._text);
-            this.Controls.Add(this._editFont);
+            this.Controls.Add(this._cText);
+            this.Controls.Add(this._cEditFont);
             this.MinimumSize = new System.Drawing.Size(150, 24);
             this.Name = "FontTextBox";
             this.Size = new System.Drawing.Size(200, 24);
@@ -80,9 +75,8 @@
 
         #endregion
 
-        private System.Windows.Forms.Button _editFont;
-        private System.Windows.Forms.TextBox _text;
-        private System.Windows.Forms.FontDialog _dialog;
-        private System.Windows.Forms.ToolTip _toolTip;
+        private System.Windows.Forms.Button _cEditFont;
+        private System.Windows.Forms.TextBox _cText;
+        private System.Windows.Forms.ToolTip _cToolTip;
     }
 }

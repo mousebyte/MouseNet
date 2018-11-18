@@ -6,8 +6,7 @@ namespace MouseNet.Forms.Controls
     /// <inheritdoc />
     /// <summary>
     ///     Represents a pair of <see cref="T:System.Windows.Forms.NumericUpDown" />
-    ///     controls that
-    ///     can be used to input dimensions.
+    ///     controls that can be used to input dimensions.
     /// </summary>
     /// <seealso cref="T:System.Windows.Forms.UserControl" />
     public partial class SizeControl : UserControl
@@ -29,7 +28,7 @@ namespace MouseNet.Forms.Controls
                 new Size(screenArea.Width, screenArea.Height);
             }
 
-        private int WidthLeft => Padding.Left + lblSize.Width;
+        private int WidthLeft => Padding.Left + _lblSize.Width;
 
         /// <summary>
         ///     Gets or sets the value of the control.
@@ -38,7 +37,8 @@ namespace MouseNet.Forms.Controls
         ///     The value.
         /// </value>
         public Size Value {
-            get => new Size((int) cWidth.Value, (int) cHeight.Value);
+            get =>
+                new Size((int) _cWidth.Value, (int) _cHeight.Value);
             set {
                 WidthValue = value.Width;
                 HeightValue = value.Height;
@@ -52,13 +52,13 @@ namespace MouseNet.Forms.Controls
         ///     The width value.
         /// </value>
         public int WidthValue {
-            get => (int) cWidth.Value;
+            get => (int) _cWidth.Value;
             set {
                 if (value < MinimumValue.Width)
-                    cWidth.Value = MinimumValue.Width;
+                    _cWidth.Value = MinimumValue.Width;
                 else if (value > MaximumValue.Width)
-                    cWidth.Value = MaximumValue.Width;
-                else cWidth.Value = value;
+                    _cWidth.Value = MaximumValue.Width;
+                else _cWidth.Value = value;
             }
         }
 
@@ -69,13 +69,13 @@ namespace MouseNet.Forms.Controls
         ///     The height value.
         /// </value>
         public int HeightValue {
-            get => (int) cHeight.Value;
+            get => (int) _cHeight.Value;
             set {
                 if (value < MinimumValue.Height)
-                    cWidth.Value = MinimumValue.Height;
+                    _cWidth.Value = MinimumValue.Height;
                 else if (value > MaximumValue.Height)
-                    cWidth.Value = MaximumValue.Height;
-                else cWidth.Value = value;
+                    _cWidth.Value = MaximumValue.Height;
+                else _cWidth.Value = value;
             }
         }
 
@@ -86,10 +86,10 @@ namespace MouseNet.Forms.Controls
         ///     <c>true</c> if the label is shown; otherwise, <c>false</c>.
         /// </value>
         public bool ShowLabel {
-            get => Controls.Contains(lblSize);
+            get => Controls.Contains(_lblSize);
             set {
-                if (value) Controls.Add(lblSize);
-                else Controls.Remove(lblSize);
+                if (value) Controls.Add(_lblSize);
+                else Controls.Remove(_lblSize);
             }
         }
 
@@ -103,8 +103,8 @@ namespace MouseNet.Forms.Controls
             get => _minimumValue;
             set {
                 _minimumValue = value;
-                cWidth.Minimum = value.Width;
-                cHeight.Minimum = value.Height;
+                _cWidth.Minimum = value.Width;
+                _cHeight.Minimum = value.Height;
             }
         }
 
@@ -118,8 +118,8 @@ namespace MouseNet.Forms.Controls
             get => _maximumValue;
             set {
                 _maximumValue = value;
-                cWidth.Maximum = value.Width;
-                cHeight.Maximum = value.Height;
+                _cWidth.Maximum = value.Width;
+                _cHeight.Maximum = value.Height;
             }
         }
 
@@ -136,15 +136,17 @@ namespace MouseNet.Forms.Controls
             if (setWidth && width < 135) width = 135;
             base.SetBoundsCore(x, y, width, height, specified);
             if (!setWidth) return;
+            //Combined width of the NUD controls
             var combindedWidth =
                 Width - WidthLeft - CenterWidth - Padding.Right;
             var nudWidth = combindedWidth / 2;
-            cWidth.Width = combindedWidth % 2 > 0
-                               ? nudWidth + 1
-                               : nudWidth;
-            cHeight.Width = nudWidth;
-            lblX.Left = cWidth.Right + 2;
-            cHeight.Left = lblX.Right + 1;
+            //If it's odd, add one to the width of _cWidth to compensate
+            _cWidth.Width = combindedWidth % 2 > 0
+                                ? nudWidth + 1
+                                : nudWidth;
+            _cHeight.Width = nudWidth;
+            _lblX.Left = _cWidth.Right + 2;
+            _cHeight.Left = _lblX.Right + 1;
             }
     }
 }
