@@ -28,7 +28,7 @@ namespace MouseNet.Forms.Controls
                 new Size(screenArea.Width, screenArea.Height);
             }
 
-        private int WidthLeft => Padding.Left + _lblSize.Width;
+        private int WidthLeft => 3 + _lblSize.Width;
 
         /// <summary>
         ///     Gets or sets the value of the control.
@@ -138,7 +138,7 @@ namespace MouseNet.Forms.Controls
             if (!setWidth) return;
             //Combined width of the NUD controls
             var combindedWidth =
-                Width - WidthLeft - CenterWidth - Padding.Right;
+                Width - WidthLeft - CenterWidth - 3;
             var nudWidth = combindedWidth / 2;
             //If it's odd, add one to the width of _cWidth to compensate
             _cWidth.Width = combindedWidth % 2 > 0
