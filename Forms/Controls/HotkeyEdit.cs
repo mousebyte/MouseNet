@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
-namespace MouseNet.Forms
+namespace MouseNet.Forms.Controls
 {
     /// <inheritdoc />
     /// <summary>
@@ -43,7 +43,7 @@ namespace MouseNet.Forms
 
         /// <inheritdoc />
         /// <summary>
-        ///     Constructs a <see cref="T:MouseNet.Forms.HotkeyEdit" /> control using default values.
+        ///     Constructs a <see cref="T:MouseNet.Forms.Controls.HotkeyEdit" /> control using default values.
         /// </summary>
         public HotkeyEdit()
             {

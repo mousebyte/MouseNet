@@ -79,7 +79,7 @@
     <Compile Include="Controls\WrappingLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="HotkeyEdit.cs">
+    <Compile Include="Controls\HotkeyEdit.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
