@@ -9,8 +9,8 @@ namespace MouseNet.Forms
 {
     /// <inheritdoc />
     /// <summary>
-    /// Represents a text box that the user can use to input
-    /// a hotkey combination.
+    ///     Represents a text box that the user can use to input
+    ///     a hotkey combination.
     /// </summary>
     public class HotkeyEdit : TextBox
     {
@@ -43,7 +43,7 @@ namespace MouseNet.Forms
 
         /// <inheritdoc />
         /// <summary>
-        /// Constructs a <see cref="T:MouseNet.Forms.HotkeyEdit" /> control using default values.
+        ///     Constructs a <see cref="T:MouseNet.Forms.HotkeyEdit" /> control using default values.
         /// </summary>
         public HotkeyEdit()
             {
@@ -57,11 +57,13 @@ namespace MouseNet.Forms
 
         /// <inheritdoc />
         /// <summary>
-        /// Constructs a <see cref="HotkeyEdit" /> control using the specified
-        /// key blacklist.
+        ///     Constructs a <see cref="HotkeyEdit" /> control using the specified
+        ///     key blacklist.
         /// </summary>
-        /// <param name="modifierBlacklist">An <see cref="System.Collections.IEnumerable" />
-        /// object containing blacklisted key combinations.</param>
+        /// <param name="modifierBlacklist">
+        ///     An <see cref="System.Collections.IEnumerable" />
+        ///     object containing blacklisted key combinations.
+        /// </param>
         public HotkeyEdit
             (IEnumerable<Keys> modifierBlacklist)
             : this()
@@ -71,8 +73,8 @@ namespace MouseNet.Forms
 
         /// <inheritdoc />
         /// <summary>
-        /// Constructs a <see cref="HotkeyEdit" /> control using the specified
-        /// key blacklist.
+        ///     Constructs a <see cref="HotkeyEdit" /> control using the specified
+        ///     key blacklist.
         /// </summary>
         /// <param name="modifierBlacklist">An array of blacklisted key combinations.</param>
         public HotkeyEdit
@@ -83,11 +85,11 @@ namespace MouseNet.Forms
             }
 
         /// <summary>
-        /// Gets or sets a value indicating wheather to allow hotkeys with
-        /// Shift as their only modifier.
+        ///     Gets or sets a value indicating wheather to allow hotkeys with
+        ///     Shift as their only modifier.
         /// </summary>
         /// <remarks>
-        /// AllowShiftOnlyHotkeys uses the Blacklist property internally.
+        ///     AllowShiftOnlyHotkeys uses the Blacklist property internally.
         /// </remarks>
         public bool AllowShiftOnlyHotkeys {
             get => !Blacklist.Contains(Keys.Shift);
@@ -99,11 +101,11 @@ namespace MouseNet.Forms
         }
 
         /// <summary>
-        /// Gets or sets a value indicating wheather to allow hotkeys with
-        /// Control as their only modifier.
+        ///     Gets or sets a value indicating wheather to allow hotkeys with
+        ///     Control as their only modifier.
         /// </summary>
         /// <remarks>
-        /// AllowCtrlOnlyHotkeys uses the Blacklist property internally.
+        ///     AllowCtrlOnlyHotkeys uses the Blacklist property internally.
         /// </remarks>
         public bool AllowCtrlOnlyHotkeys {
             get => !Blacklist.Contains(Keys.Control);
@@ -115,13 +117,13 @@ namespace MouseNet.Forms
         }
 
         /// <summary>
-        /// Gets a list representing blacklisted key combinations. Blacklisted items
-        /// can be modifiers, key codes, or a combination of the two.
+        ///     Gets a list representing blacklisted key combinations. Blacklisted items
+        ///     can be modifiers, key codes, or a combination of the two.
         /// </summary>
         public IList<Keys> Blacklist { get; }
 
         /// <summary>
-        /// Gets or sets the value of the <see cref="HotkeyEdit"/> control.
+        ///     Gets or sets the value of the <see cref="HotkeyEdit" /> control.
         /// </summary>
         public Keys Hotkey {
             get => _keyCode | _modifiers;
@@ -133,7 +135,7 @@ namespace MouseNet.Forms
         }
 
         /// <summary>
-        /// Gets or sets the modifier flags for the <see cref="HotkeyEdit"/> control.
+        ///     Gets or sets the modifier flags for the <see cref="HotkeyEdit" /> control.
         /// </summary>
         public Keys Modifiers {
             get => _modifiers;
@@ -144,7 +146,7 @@ namespace MouseNet.Forms
         }
 
         /// <summary>
-        /// Gets or sets the keyboard code for the <see cref="HotkeyEdit"/> control.
+        ///     Gets or sets the keyboard code for the <see cref="HotkeyEdit" /> control.
         /// </summary>
         public Keys KeyCode {
             get => _keyCode;
@@ -155,7 +157,7 @@ namespace MouseNet.Forms
         }
 
         /// <summary>
-        /// Clears the hotkey value from the HotkeyEdit control.
+        ///     Clears the hotkey value from the HotkeyEdit control.
         /// </summary>
         public new void Clear()
             {
@@ -175,6 +177,19 @@ namespace MouseNet.Forms
                     || base.ProcessCmdKey(ref msg, keyData);
             Clear();
             return true;
+            }
+
+        private bool CheckBlacklist
+            (Keys keyCode)
+            {
+            if (!Blacklist.Any(k => k == _modifiers
+                                 || k == keyCode
+                                 || k == (_modifiers & keyCode)))
+                return true;
+
+            Clear();
+            _inputting = false;
+            return false;
             }
 
         private static void PopulateModifierLists()
@@ -220,19 +235,6 @@ namespace MouseNet.Forms
                 }
 
             Text = text;
-            }
-
-        private bool CheckBlacklist
-            (Keys keyCode)
-            {
-            if (!Blacklist.Any(k => k == _modifiers
-                                 || k == keyCode
-                                 || k == (_modifiers & keyCode)))
-                return true;
-
-            Clear();
-            _inputting = false;
-            return false;
             }
 
         /// <inheritdoc />
@@ -297,6 +299,8 @@ namespace MouseNet.Forms
 
     internal static class User32Interop
     {
+        private const byte HighBit = 0x80;
+
         public static char ToAscii
             (Keys key,
              Keys modifiers)
@@ -309,23 +313,16 @@ namespace MouseNet.Forms
                                  0);
             if (result == 1)
                 return outputBuilder[0];
-            else
-                throw new Exception("Invalid key");
+            throw new Exception("Invalid key");
             }
-
-        private const byte HighBit = 0x80;
 
         private static byte[] GetKeyState
             (Keys modifiers)
             {
             var keyState = new byte[256];
             foreach (Keys key in Enum.GetValues(typeof(Keys)))
-                {
                 if ((modifiers & key) == key)
-                    {
                     keyState[(int) key] = HighBit;
-                    }
-                }
 
             return keyState;
             }

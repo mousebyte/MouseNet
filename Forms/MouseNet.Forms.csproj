@@ -58,12 +58,6 @@
     <Compile Include="Controls\FontTextBox.designer.cs">
       <DependentUpon>FontTextBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\HotkeyEditold.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\HotkeyEditold.Designer.cs">
-      <DependentUpon>HotkeyEditold.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\RadioButtonGroup.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -96,9 +90,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\FontTextBox.resx">
       <DependentUpon>FontTextBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\HotkeyEditold.resx">
-      <DependentUpon>HotkeyEditold.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\RadioButtonGroup.resx">
       <DependentUpon>RadioButtonGroup.cs</DependentUpon>
