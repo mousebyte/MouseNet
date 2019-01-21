@@ -262,3 +262,6 @@ __pycache__/
 /Forms/RadioButtonGroupTest.cs
 /Forms/RadioButtonGroupTest.Designer.cs
 /Forms/RadioButtonGroupTest.resx
+/Forms/Controls/HotkeyEditold.cs
+/Forms/Controls/HotkeyEditold.Designer.cs
+/Forms/Controls/HotkeyEditold.resx

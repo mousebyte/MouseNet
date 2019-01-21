@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseNet.Forms", "Forms\Mou
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseNet.Tools", "Tools\MouseNet.Tools.csproj", "{2260125F-0101-4AC1-A42C-503422F46304}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormsTesting", "..\FormsTesting\FormsTesting.csproj", "{D6673FE6-513C-4581-935F-53C45B4F4214}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2260125F-0101-4AC1-A42C-503422F46304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2260125F-0101-4AC1-A42C-503422F46304}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2260125F-0101-4AC1-A42C-503422F46304}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6673FE6-513C-4581-935F-53C45B4F4214}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6673FE6-513C-4581-935F-53C45B4F4214}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6673FE6-513C-4581-935F-53C45B4F4214}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6673FE6-513C-4581-935F-53C45B4F4214}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
