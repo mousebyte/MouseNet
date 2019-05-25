@@ -45,6 +45,7 @@
     <Compile Include="IO\IFileNode.cs" />
     <Compile Include="IO\ISelfSerializable.cs" />
     <Compile Include="IO\SerializableObject.cs" />
+    <Compile Include="MessageReceiver.cs" />
     <Compile Include="NamedObject.cs" />
     <Compile Include="NamedObjectList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
