@@ -2,6 +2,8 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <RepositoryUrl>https://github.com/mousebyte/MouseNet.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{820CE272-EA96-43E1-A98A-F9CF1EE474EE}</ProjectGuid>
@@ -77,7 +79,10 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\HotkeyEdit.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\HotkeyEdit.Designer.cs">
+      <DependentUpon>HotkeyEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -96,6 +101,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\SizeControl.resx">
       <DependentUpon>SizeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\HotkeyEdit.resx">
+      <DependentUpon>HotkeyEdit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
