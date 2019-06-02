@@ -8,11 +8,13 @@ using System.Windows.Forms;
 
 namespace MouseNet.Forms.Controls {
     /// <summary>
-    /// Represents a control that can be used to input a hotkey combination.
+    ///     Represents a control that can be used to input a hotkey combination.
     /// </summary>
     public partial class HotkeyEdit : UserControl {
-
         private readonly InputControl _inputControl;
+
+
+        private Keys _previousValue = Keys.None;
 
         /// <inheritdoc />
         public HotkeyEdit()
@@ -23,8 +25,11 @@ namespace MouseNet.Forms.Controls {
                 {
                 Location = new Point(0, 4),
                 Size = new Size(Width - 54, Height - 8),
-                Anchor = AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top,
-                Visible = true
+                Anchor = AnchorStyles.Left | AnchorStyles.Bottom
+                                           | AnchorStyles.Right
+                                           | AnchorStyles.Top,
+                Visible = true,
+                BackColor = SystemColors.Control
                 };
             _inputControl.ValidHotkeyEntered += OnValidHotkeyEntered;
             _inputControl.InputCancelled += OnInputCancelled;
@@ -35,61 +40,20 @@ namespace MouseNet.Forms.Controls {
             }
 
         /// <summary>
-        /// Gets or sets the value assigned to the hotkey control.
+        ///     Gets or sets a value indicating wheather to allow hotkeys with
+        ///     Control as their only modifier.
         /// </summary>
-        public Keys Value {
-            get => _inputControl.Value;
-            set => _inputControl.Value = value;
-        }
-
-        
-        private Keys _previousValue = Keys.None;
-
-        private void OnInputCancelled(object sender, EventArgs args)
-            {
-            _inputControl.Value = _previousValue;
-            _btnAccept.Enabled = false;
-            ShowButtons = false;
-            }
-
-        private void OnValidHotkeyEntered(object sender, EventArgs args)
-            {
-            _btnAccept.Enabled = true;
-            }
-
-        private void OnAcceptClicked(object sender, EventArgs args)
-            {
-            _previousValue = _inputControl.Value;
-            _btnAccept.Enabled = false;
-            ShowButtons = false;
-            }
-
-        private void OnInputStarted(object sender, EventArgs args)
-            {
-            ShowButtons = true;
-            _btnAccept.Enabled = false;
-            }
-
-        private bool ShowButtons {
+        /// <remarks>
+        ///     AllowCtrlOnlyHotkeys uses the Blacklist property internally.
+        /// </remarks>
+        public bool AllowCtrlOnlyHotkeys {
+            get => !Blacklist.Contains(Keys.Control);
             set {
-                _btnAccept.Visible = value;
-                _btnCancel.Visible = value;
+                if (value == AllowCtrlOnlyHotkeys) return;
+                if (!value) Blacklist.Add(Keys.Control);
+                else Blacklist.Remove(Keys.Control);
             }
         }
-
-        /// <summary>
-        /// Clears the value of the hotkey control.
-        /// </summary>
-        public void Clear()
-            {
-            _inputControl.Value = Keys.None;
-            }
-
-        /// <summary>
-        ///     Gets a list representing blacklisted key combinations. Blacklisted items
-        ///     can be modifiers, key codes, or a combination of the two.
-        /// </summary>
-        public IList<Keys> Blacklist { get; } = new List<Keys>();
 
 
         /// <summary>
@@ -109,20 +73,75 @@ namespace MouseNet.Forms.Controls {
         }
 
         /// <summary>
-        ///     Gets or sets a value indicating wheather to allow hotkeys with
-        ///     Control as their only modifier.
+        ///     Gets a list representing blacklisted key combinations. Blacklisted items
+        ///     can be modifiers, key codes, or a combination of the two.
         /// </summary>
-        /// <remarks>
-        ///     AllowCtrlOnlyHotkeys uses the Blacklist property internally.
-        /// </remarks>
-        public bool AllowCtrlOnlyHotkeys {
-            get => !Blacklist.Contains(Keys.Control);
+        public IList<Keys> Blacklist { get; } = new List<Keys>();
+
+        /// <summary>
+        ///     Gets or sets the value assigned to the hotkey control.
+        /// </summary>
+        public Keys Value {
+            get => _inputControl.Value;
+            set => _inputControl.Value = value;
+        }
+
+        private bool ShowButtons {
             set {
-                if (value == AllowCtrlOnlyHotkeys) return;
-                if (!value) Blacklist.Add(Keys.Control);
-                else Blacklist.Remove(Keys.Control);
+                _btnAccept.Visible = value;
+                _btnCancel.Visible = value;
             }
         }
+
+
+        /// <inheritdoc />
+        protected override void OnLeave(EventArgs e)
+            {
+            base.OnLeave(e);
+            _inputControl.CancelInput();
+            }
+
+        private void Unfocus()
+            {
+            var container = Parent.GetContainerControl();
+            if(container != null) container.ActiveControl = null;
+            else Parent.SelectNextControl(this, true, false, false, true);
+            }
+
+        private void OnInputCancelled(object sender, EventArgs args)
+            {
+            _inputControl.Value = _previousValue;
+            _btnAccept.Enabled = false;
+            ShowButtons = false;
+            Unfocus();
+            }
+
+        private void OnValidHotkeyEntered(object sender, EventArgs args)
+            {
+            _btnAccept.Enabled = true;
+            }
+
+        private void OnAcceptClicked(object sender, EventArgs args)
+            {
+            _previousValue = _inputControl.Value;
+            _btnAccept.Enabled = false;
+            ShowButtons = false;
+            Unfocus();
+            }
+
+        private void OnInputStarted(object sender, EventArgs args)
+            {
+            ShowButtons = true;
+            _btnAccept.Enabled = false;
+            }
+
+        /// <summary>
+        ///     Clears the value of the hotkey control.
+        /// </summary>
+        public void Clear()
+            {
+            _inputControl.Value = Keys.None;
+            }
 
         private class InputControl : Control {
             private static readonly KeysConverter KeysConverter =
@@ -148,11 +167,12 @@ namespace MouseNet.Forms.Controls {
                     Keys.Pause
                     };
 
+            private readonly HotkeyEdit _parent;
+
             private bool _inputting;
             private Keys _keyCode;
             private Keys _modifiers;
             private int _textTop;
-            private readonly HotkeyEdit _parent;
 
             public InputControl(HotkeyEdit parent)
                 {
@@ -166,6 +186,12 @@ namespace MouseNet.Forms.Controls {
                 UpdateTextTop();
                 }
 
+            public event EventHandler InputCancelled;
+
+            public event EventHandler InputStarted;
+
+            public event EventHandler ValidHotkeyEntered;
+
             public bool IsValid { get; private set; }
 
             public Keys Value {
@@ -176,46 +202,6 @@ namespace MouseNet.Forms.Controls {
                     UpdateText();
                 }
             }
-
-            private void UpdateTextTop()
-                {
-                _textTop = (Height - TextRenderer.MeasureText(Text, Font).Height) / 2 + 1;
-                }
-
-            public event EventHandler ValidHotkeyEntered;
-
-            private void InvokeValidHotkeyEntered(object sender, EventArgs args)
-                {
-                ValidHotkeyEntered?.Invoke(sender, args);
-                }
-
-            public event EventHandler InputCancelled;
-
-            private void InvokeInputCancelled(object sender, EventArgs args)
-                {
-                InputCancelled?.Invoke(sender, args);
-                }
-
-            public event EventHandler InputStarted;
-
-            private void InvokeInputStarted(object sender, EventArgs args)
-                {
-                InputStarted?.Invoke(sender, args);
-                }
-
-            private void UpdateValidity()
-                {
-                IsValid = !_inputting
-                       && _keyCode != Keys.None
-                       && (_modifiers != Keys.Shift
-                        || !NeedNonShiftMod.Contains(_keyCode))
-                       && (_modifiers != (Keys.Control | Keys.Alt)
-                        || !NeedNonCtlAltMod.Contains(_keyCode))
-                       && !_parent.Blacklist.Any(
-                              k => k == _modifiers
-                                || k == _keyCode
-                                || k == (_modifiers & _keyCode));
-                }
 
             protected override void OnFontChanged(EventArgs e)
                 {
@@ -234,19 +220,30 @@ namespace MouseNet.Forms.Controls {
                 base.OnPaint(e);
                 var g = e.Graphics;
                 var rect = new Rectangle(0, 0, Width - 1, Height - 1);
-                g.FillRectangle(new SolidBrush(BackColor), rect);
-                g.DrawString(Text, Font, new SolidBrush(ForeColor), 0, _textTop);
+                g.FillRectangle(
+                    _parent.Enabled
+                        ? new SolidBrush(BackColor)
+                        : SystemBrushes.ControlDarkDark,
+                    rect);
+                g.DrawString(
+                    Text,
+                    Font,
+                    new SolidBrush(ForeColor),
+                    0,
+                    _textTop);
                 if (Value == Keys.None || IsValid)
                     g.DrawRectangle(
                         Focused
                             ? SystemPens.Highlight
-                            : SystemPens.ControlDarkDark, rect);
+                            : SystemPens.ControlDarkDark,
+                        rect);
                 else g.DrawRectangle(Pens.Red, rect);
                 }
 
             protected override void OnClick(EventArgs e)
                 {
                 base.OnClick(e);
+                if (!_parent.Enabled) return;
                 Focus();
                 Invalidate();
                 }
@@ -261,53 +258,6 @@ namespace MouseNet.Forms.Controls {
                         || base.ProcessCmdKey(ref msg, keyData);
                 Value = Keys.None;
                 return true;
-                }
-
-            private static void PopulateModifierLists()
-                {
-                for (var k = Keys.D0; k <= Keys.D9; k++)
-                    NeedNonCtlAltMod.Add(k);
-                for (var k = Keys.D0; k <= Keys.Z; k++)
-                    NeedNonShiftMod.Add(k);
-                for (var k = Keys.NumPad0; k <= Keys.NumPad9; k++)
-                    NeedNonShiftMod.Add(k);
-                for (var k = Keys.Oem1; k <= Keys.OemBackslash; k++)
-                    NeedNonShiftMod.Add(k);
-                for (var k = Keys.Space; k <= Keys.Home; k++)
-                    NeedNonShiftMod.Add(k);
-                }
-
-            private void UpdateText()
-                {
-                if (_keyCode == Keys.None
-                 && _modifiers == Keys.None
-                 && !_inputting)
-                    {
-                    Text = @"None";
-                    return;
-                    }
-
-                var text = string.Empty;
-
-                if ((_modifiers & Keys.Control) == Keys.Control)
-                    text += "Ctrl+";
-                if ((_modifiers & Keys.Shift) == Keys.Shift)
-                    text += "Shift+";
-                if ((_modifiers & Keys.Alt) == Keys.Alt)
-                    text += "Alt+";
-                if (!_inputting)
-                    {
-                    var keyString =
-                        KeysConverter.ConvertToString(_keyCode);
-                    if (keyString != null && keyString.Contains("Oem"))
-                        text +=
-                            User32Interop.ToAscii(_keyCode, Keys.None);
-                    else text += keyString;
-                    }
-
-                Text = text;
-                UpdateValidity();
-                Invalidate();
                 }
 
             protected override void OnKeyDown
@@ -363,11 +313,101 @@ namespace MouseNet.Forms.Controls {
                     _inputting = true;
                     InvokeInputStarted(this, EventArgs.Empty);
                     }
+
                 e.IsInputKey = e.Modifiers != Keys.None;
+                }
+
+            private void InvokeValidHotkeyEntered(object sender, EventArgs args)
+                {
+                ValidHotkeyEntered?.Invoke(sender, args);
+                }
+
+            private void InvokeInputCancelled(object sender, EventArgs args)
+                {
+                _inputting = false;
+                InputCancelled?.Invoke(sender, args);
+                }
+
+            private void InvokeInputStarted(object sender, EventArgs args)
+                {
+                InputStarted?.Invoke(sender, args);
+                }
+
+            private void UpdateTextTop()
+                {
+                _textTop =
+                    (Height - TextRenderer.MeasureText(Text, Font).Height) / 2
+                  + 1;
+                }
+
+            public void CancelInput()
+                {
+                InvokeInputCancelled(this, EventArgs.Empty);
+                }
+
+            private void UpdateValidity()
+                {
+                IsValid = !_inputting
+                       && _keyCode != Keys.None
+                       && (_modifiers != Keys.Shift
+                        || !NeedNonShiftMod.Contains(_keyCode))
+                       && (_modifiers != (Keys.Control | Keys.Alt)
+                        || !NeedNonCtlAltMod.Contains(_keyCode))
+                       && !_parent.Blacklist.Any(
+                              k => k == _modifiers
+                                || k == _keyCode
+                                || k == (_modifiers & _keyCode));
+                }
+
+            private static void PopulateModifierLists()
+                {
+                for (var k = Keys.D0; k <= Keys.D9; k++)
+                    NeedNonCtlAltMod.Add(k);
+                for (var k = Keys.D0; k <= Keys.Z; k++)
+                    NeedNonShiftMod.Add(k);
+                for (var k = Keys.NumPad0; k <= Keys.NumPad9; k++)
+                    NeedNonShiftMod.Add(k);
+                for (var k = Keys.Oem1; k <= Keys.OemBackslash; k++)
+                    NeedNonShiftMod.Add(k);
+                for (var k = Keys.Space; k <= Keys.Home; k++)
+                    NeedNonShiftMod.Add(k);
+                }
+
+            private void UpdateText()
+                {
+                if (_keyCode == Keys.None
+                 && _modifiers == Keys.None
+                 && !_inputting)
+                    {
+                    Text = @"None";
+                    return;
+                    }
+
+                var text = string.Empty;
+
+                if ((_modifiers & Keys.Control) == Keys.Control)
+                    text += "Ctrl+";
+                if ((_modifiers & Keys.Shift) == Keys.Shift)
+                    text += "Shift+";
+                if ((_modifiers & Keys.Alt) == Keys.Alt)
+                    text += "Alt+";
+                if (!_inputting)
+                    {
+                    var keyString =
+                        KeysConverter.ConvertToString(_keyCode);
+                    if (keyString != null && keyString.Contains("Oem"))
+                        text +=
+                            User32Interop.ToAscii(_keyCode, Keys.None);
+                    else text += keyString;
+                    }
+
+                Text = text;
+                UpdateValidity();
+                Invalidate();
                 }
         }
     }
-    
+
     internal static class User32Interop {
         private const byte HighBit = 0x80;
 
